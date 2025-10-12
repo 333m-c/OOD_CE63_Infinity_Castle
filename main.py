@@ -247,7 +247,8 @@ Enter command : """)
             hotel.enqueue(tmp)
             arr.append(pow(2,tmp[0]-1)*pow(3,tmp[1]-1)*pow(5,tmp[2]-1)*pow(7,i))
         end = max(arr)
-        os.remove("./Hotel's room.txt")
+        if os.path.exists("./Hotel's room.txt"):
+            os.remove("./Hotel's room.txt")
         with open("Hotel's room.txt", "a", encoding="utf-8") as f:
             for i in range(1,end+1):
                 status = serch(i)
