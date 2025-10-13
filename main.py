@@ -237,7 +237,7 @@ Enter command : """)
             print(f"Insert room : {targetRoom}")
             addRoom.append(targetRoom)
         else:
-            print(f"Room : {targetRoom} already insert")
+            print(f"insert Room : {targetRoom}")
         end_time = time.perf_counter()
         elapsed_time = end_time - start_time
         print(f"Execution time (insert): {elapsed_time:.10f} seconds")
