@@ -2,11 +2,7 @@ import tracemalloc
 import time
 import os
 
-
-
-
 tracemalloc.start()
-
 
 class Queue:
     def __init__(self, datas = None):
@@ -41,12 +37,6 @@ class Queue:
         return str(self.items)
 
 
-
-def hash(a,b):
-    return pow(2,a) * pow(3,b) 
-
-
-
 def findRoom(n: int, limits=None):
     primes = [2, 3, 5, 7]
     exponents = []
@@ -68,26 +58,8 @@ def findRoom(n: int, limits=None):
     return exponents
 
 
-
-def is_prime(n: int):
-    if n < 2:
-        return False
-    for i in range(2, int(n**0.5) + 1):
-        if n % i == 0:
-            return False
-    return True
-
-def prime_at_index(index: int):
-    count = 0
-    num = 1
-    while True:
-        num += 1
-        if is_prime(num):
-            count += 1
-            if count == index:
-                return num
             
-def serch(roomNumber):
+def search(roomNumber):
     isFound = False
     if roomNumber in delRoom:
         return False
@@ -102,15 +74,23 @@ def serch(roomNumber):
                 7:index
             }
             result = findRoom(roomNumber,dic)
-            # print(result,dic)
             if result:
                 result = [i+1 for i in result]
-                return (f"Room : {roomNumber} stayed by : people {result[0]} , channel {result[1]} , way {result[2]} , round {hotel.size()-(result[3]-1)}")
+                return (f"Room : {roomNumber} stayed by : people {result[0]} , bus {result[1]} , boat {result[2]} , round {hotel.size()-(result[3]-1)}")
         if not isFound:
-            return f"Room : {roomNumber} is Emthy"
+            return f"Room : {roomNumber} is Empty"
 
+inp = []
 
-inp = input("Welcome to our H O T E L (format : x/x/x): ").split("/")
+print()
+print("Welcome to our H O T E L ")
+print()
+print("==========================================================")
+print()
+print("การเดินทาง เรือ > รถบัส > คน")
+inp1 = int(input("จำนวนเรือ   : "))
+inp2 = int(input("จำนวนรถบัส  : "))
+inp3 = int(input("จำนวนคน    : "))
 start_time = time.perf_counter()
 print()
 print("==========================================================")
@@ -119,13 +99,8 @@ print("Prepare phase")
 print()
 print("Prepare . . .")
 print()
-inp = [int(i) for i in inp]
-while len(inp) < 3:
-    inp.append(1)
+inp.extend([inp1, inp2, inp3])
 hotel= Queue()
-# result = 1
-# for index in range(len(inp)):
-#     result*= pow(prime_at_index(index+1),inp[index])
 hotel.enqueue(inp)
 
 
@@ -142,30 +117,34 @@ print()
 while True:
     print("==========================================================")
     cmd = input("""
-Add tourists (a) Delete room (d) Find room (f)
-Insert room (i)  See memory (m)  Export file (e)
-                    Quit (q)
+Command :
+    a : Add tourists
+    d : Delete room
+    f : Find room
+    i : Insert room
+    m : See memory
+    e : Export file
+    q : Quit
 
 Enter command : """)
     print()
     print("==========================================================")
     print()
     if cmd == "a":
-        arr = input("Welcome to our H O T E L (format : x/x/x): ")
+        print("Add tourists")
+        inp1 = int(input("จำนวนเรือ   : "))
+        inp2 = int(input("จำนวนรถบัส  : "))
+        inp3 = int(input("จำนวนคน    : "))
+        print()
+        print("==========================================================")
+        print()
         start_time = time.perf_counter()
         print("Add room . . .")
-        text =arr
-        arr = arr.split("/")
-        arr = [int(i) for i in arr]
-        while len(arr) < 3:
-            arr.append(1)
-        # result = 1
-        # for index in range(len(arr)):
-        #     result*= pow(prime_at_index(index+1),inp[index])
+        arr = []
+        arr.extend([inp1, inp2, inp3])
         hotel.reverse()
         hotel.enqueue(arr)
-        #print(hotel)
-        print(f"Already add {text}")
+        print(f"Already add {arr}")
         end_time = time.perf_counter()
         elapsed_time = end_time - start_time
         print(f"Execution time (add): {elapsed_time:.10f} seconds")
@@ -193,21 +172,13 @@ Enter command : """)
         end_time = time.perf_counter()
         elapsed_time = end_time - start_time
         print(f"Execution time (del): {elapsed_time:.10f} seconds")
-        
-    # elif cmd[0] == "s":
-    #     start_time = time.perf_counter()
-    #     print("sort")
-    #     end_time = time.perf_counter()
-    #     elapsed_time = end_time - start_time
-    #     print(f"Execution time: {elapsed_time:.4f} seconds")
 
     elif cmd == "f":
-
         targetRoom = input("Enter room number : ")
         print("Find room . . .")
         start_time = time.perf_counter()
         roomNumber = int(targetRoom)
-        status = serch(roomNumber)
+        status = search(roomNumber)
         if not status:
             print(f"Not found room : {targetRoom}")
         else:print(status)
@@ -262,7 +233,7 @@ Enter command : """)
             os.remove("./Hotel's room.txt")
         with open("Hotel's room.txt", "a", encoding="utf-8") as f:
             for i in range(1,end+1):
-                status = serch(i)
+                status = search(i)
                 if status:
                     f.write(f"{status}\n")
         filePath = "./Hotel's room.txt"
@@ -287,7 +258,4 @@ Enter command : """)
 
         print("Plese enter a,d,f,i,m,q,e !!")
 
-    print()
-    print("==========================================================")
-    print()
     print()
