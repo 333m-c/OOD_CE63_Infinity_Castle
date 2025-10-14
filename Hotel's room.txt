@@ -1,0 +1,9 @@
+Last room number : 30
+Room : 1 stayed by : people 1 , bus 1 , boat 1 , round 1
+Room : 2 stayed by : people 2 , bus 1 , boat 1 , round 1
+Room : 3 stayed by : people 1 , bus 2 , boat 1 , round 1
+Room : 5 stayed by : people 1 , bus 1 , boat 2 , round 1
+Room : 6 stayed by : people 2 , bus 2 , boat 1 , round 1
+Room : 10 stayed by : people 2 , bus 1 , boat 2 , round 1
+Room : 15 stayed by : people 1 , bus 2 , boat 2 , round 1
+Room : 30 stayed by : people 2 , bus 2 , boat 2 , round 1

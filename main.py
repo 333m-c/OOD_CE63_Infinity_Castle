@@ -49,7 +49,6 @@ def findRoom(n: int, limits=None):
 
         if limits and p in limits and count > limits[p]:
             return False
-
         exponents.append(count)
 
     if n != 1:
@@ -99,7 +98,7 @@ print("Prepare phase")
 print()
 print("Prepare . . .")
 print()
-inp.extend([inp1, inp2, inp3])
+inp.extend([inp3, inp2, inp1])
 hotel= Queue()
 hotel.enqueue(inp)
 
@@ -141,7 +140,7 @@ Enter command : """)
         start_time = time.perf_counter()
         print("Add room . . .")
         arr = []
-        arr.extend([inp1, inp2, inp3])
+        arr.extend([inp3, inp2, inp1])
         hotel.reverse()
         hotel.enqueue(arr)
         print(f"Already add {arr}")
@@ -178,6 +177,17 @@ Enter command : """)
         print("Find room . . .")
         start_time = time.perf_counter()
         roomNumber = int(targetRoom)
+        arr = []
+        for room in addRoom:
+            arr.append(room)
+        for i in range(hotel.size()):
+            tmp = hotel.dequeue()
+            hotel.enqueue(tmp)
+            arr.append(pow(2,tmp[0]-1)*pow(3,tmp[1]-1)*pow(5,tmp[2]-1)*pow(7,i))
+        end = max(arr)
+        if end < roomNumber:
+            print(f"Not found room : {targetRoom}")
+            continue
         status = search(roomNumber)
         if not status:
             print(f"Not found room : {targetRoom}")
@@ -232,10 +242,12 @@ Enter command : """)
         if os.path.exists("./Hotel's room.txt"):
             os.remove("./Hotel's room.txt")
         with open("Hotel's room.txt", "a", encoding="utf-8") as f:
+            f.write(f"Last room number : {end}\n")
             for i in range(1,end+1):
                 status = search(i)
                 if status:
-                    f.write(f"{status}\n")
+                    if status[-1] != 'y':
+                        f.write(f"{status}\n")
         filePath = "./Hotel's room.txt"
         fileSize = os.path.getsize(filePath)
         file_size_mb = fileSize / 1024 /1024
