@@ -75,7 +75,6 @@ def addRoom(hotel,channels,countCollision,channel,peoples,countAdd):
     for people in range(start,end):
         key_room_number = HashRoom(channel,people)
         if key_room_number in hotel:
-            canPlace = False
             info = hotel[key_room_number]
             key_room_collision = HashRoom(1,countCollision)
             while key_room_collision in hotel:
