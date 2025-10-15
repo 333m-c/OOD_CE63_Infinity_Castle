@@ -172,7 +172,7 @@ Enter command : """)
 
     elif cmd == "e":
         start_time = time.perf_counter()
-        exportFile(hotel,countAdd)
+        print(exportFile(hotel,countAdd))
         end_time = time.perf_counter()
         elapsed_time = end_time - start_time
         print(f"Execution time (Prepare phase): {elapsed_time:.10f} seconds")
