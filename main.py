@@ -49,6 +49,8 @@ def findRoom(n: int, limits=None):
 
         if limits and p in limits and count > limits[p]:
             return False
+        if p == 5 and limits[p] != count:
+            return False
         exponents.append(count)
 
     if n != 1:
@@ -218,7 +220,7 @@ Enter command : """)
             print(f"Insert room : {targetRoom}")
             addRoom.append(targetRoom)
         else:
-            print(f"insert Room : {targetRoom}")
+            print(f"Room : {targetRoom} already insert")
         end_time = time.perf_counter()
         elapsed_time = end_time - start_time
         print(f"Execution time (insert): {elapsed_time:.10f} seconds")
