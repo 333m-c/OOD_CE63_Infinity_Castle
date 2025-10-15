@@ -13,7 +13,11 @@ def insertPeople(hotel,roomNumber,countManual):
 
 def findRoom(hotel:dict,roomNumber):
     if roomNumber in hotel:
-        return f"Room {roomNumber} : {hotel[roomNumber]}"
+        channel , people , round = hotel[roomNumber].split()
+        if channel[0] == "I":
+            return f"Room : {roomNumber} : {channel} {people} {round}\n"
+        else:
+            return f"Room : {roomNumber} : Come from channel {channel} and person {people}\n"
     return f"Not Found room : {roomNumber}"
 
 def exportFile(hotel:dict,countAdd):
