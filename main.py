@@ -4,114 +4,101 @@ import os
 
 tracemalloc.start()
 
-class Queue:
-    def __init__(self, datas = None):
-        self.items = []
-        if datas:
-            for data in datas:
-                self.enqueue(data)
+
+def insertPeople(hotel,roomNumber,countManual):
+    if roomNumber in hotel:
+        return hotel , countManual , False
+    hotel[roomNumber] = f"Insert Manual {countManual}"
+    return hotel,countManual+1 , True
+
+def findRoom(hotel:dict,roomNumber):
+    if roomNumber in hotel:
+        return f"Room {roomNumber} : {hotel[roomNumber]}"
+    return f"Not Found room : {roomNumber}"
+
+def exportFile(hotel:dict,countAdd):
+    filePath = "./Hotel's room.txt"
+    lastRound = countAdd-1
+    sorted_hotel = dict(sorted(hotel.items()))
+    if os.path.exists(filePath):
+        os.remove(filePath)
+    with open(filePath, "a", encoding="utf-8") as f:
+        for roomNumber , info in sorted_hotel.items():
+            channel , people , round = info.split()
+            if channel[0] == "I":
+                    f.write(f"Room : {roomNumber} : {channel} {people} {round}\n")
+            else:
+                if lastRound == int(round):
+                    f.write(f"New!!! Room : {roomNumber} : Come from channel {channel} and person {people}\n")
+                else:
+                    f.write(f"Room : {roomNumber} : Come from channel {channel} and person {people}\n")
+    fileSize = os.path.getsize(filePath)
+    file_size_mb = fileSize / 1024 /1024
+    return f"File size in MB: {file_size_mb:.2f} MB"
+
+def removePeople(hotel:dict,roomNumber):
+    if roomNumber in hotel:
+        del hotel[roomNumber]
+        return hotel , True
+    return hotel , False
     
-    def enqueue(self,data):
-        self.items.append(data)
 
-    def dequeue(self):
-        return self.items.pop(0)
-        
-    def peek(self):
-        return self.items[0]
+
+def seeMemory():
+    current, peak = tracemalloc.get_traced_memory()
+    return f"Current memory usage: {current / 1024 / 1024:.2f} MB"
+
+
+
+def HashRoom(sequence_of_way : int, sequence_of_people : int):
+    return int(int((sequence_of_way+sequence_of_people-1)*(sequence_of_way+sequence_of_people)/2-(sequence_of_way-1)))
+
+
+def addRoom(hotel,channels,countCollision,channel,peoples,countAdd):
     
-    def size(self):
-        return len(self.items)
-    
-    def __str__(self):
-        return str(self.items)
-    
-    def reverse(self):
-        self.items = self.items[::-1]
-    
-    
-    def clear(self):
-        self.items=[]
-
-    def __str__(self):
-        return str(self.items)
-
-
-def findRoom(n: int, limits=None):
-    primes = [2, 3, 5, 7]
-    exponents = []
-
-    for p in primes:
-        count = 0
-        while n % p == 0:
-            n //= p
-            count += 1
-
-        if limits and p in limits and count > limits[p]:
-            return False
-        if p == 5 and limits[p] != count:
-            return False
-        exponents.append(count)
-
-    if n != 1:
-        return False
-
-    return exponents
-
-
-            
-def search(roomNumber):
-    isFound = False
-    if roomNumber in delRoom:
-        return False
+    start_time = time.perf_counter()
+    if channel == 0 or peoples == 0:
+        print("Peoples and channel cannot be '0'")
+        return hotel,channel
+    channel+=1
+    if channel in channels:
+        start = channels[channel]+1
+        end = start+peoples
     else:
-        for index in range(hotel.size()):
-            arr = hotel.dequeue()
-            hotel.enqueue(arr)
-            dic = {
-                2:arr[0]-1,
-                3:arr[1]-1,
-                5:arr[2]-1,
-                7:index
-            }
-            result = findRoom(roomNumber,dic)
-            if result:
-                result = [i+1 for i in result]
-                return (f"Room : {roomNumber} stayed by : people {result[0]} , bus {result[1]} , boat {result[2]} , round {hotel.size()-(result[3]-1)}")
-        if not isFound:
-            return f"Room : {roomNumber} is Empty"
+        start = 1
+        end = peoples+1
+    channels[channel] = end-1
+    for people in range(start,end):
+        key_room_number = HashRoom(channel,people)
+        if key_room_number in hotel:
+            info = hotel[key_room_number]
+            key_room_collision = HashRoom(1,countCollision)
+            hotel[key_room_collision] = info
+            countCollision+=1
+        hotel[key_room_number] = f"{channel-1} {people} {countAdd}"
+    countAdd+=1
+    end_time = time.perf_counter()
+    elapsed_time = end_time - start_time
+    print(f"Execution time (Prepare phase): {elapsed_time:.10f} seconds")
+    return hotel , channels ,countCollision,countAdd
+    
+    
 
-inp = []
 
-print()
-print("Welcome to our H O T E L ")
-print()
+hotel = {}
+channels = {}
+countManual = 1
+countCollision = 1
+countAdd = 1
+
+
+
+
+
+print("==========================================================")
+print("**************** Welcome to our H O T E L ****************")
 print("==========================================================")
 print()
-print("การเดินทาง เรือ > รถบัส > คน")
-inp1 = int(input("จำนวนเรือ   : "))
-inp2 = int(input("จำนวนรถบัส  : "))
-inp3 = int(input("จำนวนคน    : "))
-start_time = time.perf_counter()
-print()
-print("==========================================================")
-print()
-print("Prepare phase")
-print()
-print("Prepare . . .")
-print()
-inp.extend([inp3, inp2, inp1])
-hotel= Queue()
-hotel.enqueue(inp)
-
-
-delRoom = []
-addRoom= []
-
-end_time = time.perf_counter()
-elapsed_time = end_time - start_time
-print(f"Execution time (Prepare phase): {elapsed_time:.10f} seconds")
-
 print()
 
 
@@ -133,97 +120,50 @@ Enter command : """)
     print()
     if cmd == "a":
         print("Add tourists")
-        inp1 = int(input("จำนวนเรือ   : "))
-        inp2 = int(input("จำนวนรถบัส  : "))
-        inp3 = int(input("จำนวนคน    : "))
-        print()
-        print("==========================================================")
-        print()
-        start_time = time.perf_counter()
-        print("Add room . . .")
-        arr = []
-        arr.extend([inp3, inp2, inp1])
-        hotel.reverse()
-        hotel.enqueue(arr)
-        print(f"Already add {arr}")
-        end_time = time.perf_counter()
-        elapsed_time = end_time - start_time
-        print(f"Execution time (add): {elapsed_time:.10f} seconds")
-        start_time = time.perf_counter()
-        print("Sort room . . .")
-        hotel.reverse()
-        print(f"Already sort {hotel}")
-        end_time = time.perf_counter()
-        elapsed_time = end_time - start_time
-        print(f"Execution time (sort): {elapsed_time:.10f} seconds")
+        channel = int(input("Enter channel : "))
+        peoples = int(input("Enter peoples in channel : "))
+        hotel , channels,countCollision ,countAdd= addRoom(hotel,channels,countCollision,channel,peoples,countAdd)
+        
         
     elif cmd == "d":
         targetRoom = input("Enter room number : ")
-        print("Delete room . . .")
         start_time = time.perf_counter()
+        print("Delete room . . .")
         targetRoom = int(targetRoom)
-        if targetRoom in addRoom:
-            addRoom.remove(targetRoom)
-        if not targetRoom in delRoom:
-            delRoom.append(targetRoom)
-            print(f"Room : {targetRoom} is deleted")
+        hotel ,status = removePeople(hotel,targetRoom)
+        if status:
+            print(f"Delete room : {targetRoom} ")
         else:
-            print(f"Room : {targetRoom} already delete")
-        
+            print("This room is Empty")
         end_time = time.perf_counter()
         elapsed_time = end_time - start_time
-        print(f"Execution time (del): {elapsed_time:.10f} seconds")
+        print(f"Execution time (Prepare phase): {elapsed_time:.10f} seconds")
 
     elif cmd == "f":
         targetRoom = input("Enter room number : ")
-        print("Find room . . .")
         start_time = time.perf_counter()
-        roomNumber = int(targetRoom)
-        arr = []
-        for room in addRoom:
-            arr.append(room)
-        for i in range(hotel.size()):
-            tmp = hotel.dequeue()
-            hotel.enqueue(tmp)
-            arr.append(pow(2,tmp[0]-1)*pow(3,tmp[1]-1)*pow(5,tmp[2]-1)*pow(7,i))
-        end = max(arr)
-        if end < roomNumber:
-            print(f"Not found room : {targetRoom}")
-            continue
-        status = search(roomNumber)
-        if not status:
-            print(f"Not found room : {targetRoom}")
-        else:print(status)
+        targetRoom = int(targetRoom)
+        print("Find room . . .")
+        print(findRoom(hotel,targetRoom))
         end_time = time.perf_counter()
         elapsed_time = end_time - start_time
-        print(f"Execution time (find): {elapsed_time:.10f} seconds")
+        print(f"Execution time (Prepare phase): {elapsed_time:.10f} seconds")
 
     elif cmd == "i":
         targetRoom = input("Enter room number : ")
         print("Insert room . . .")
         start_time = time.perf_counter()
         targetRoom = int(targetRoom)
-        arr = []
-        for room in addRoom:
-            arr.append(room)
-        for i in range(hotel.size()):
-            tmp = hotel.dequeue()
-            hotel.enqueue(tmp)
-            arr.append(pow(2,tmp[0]-1)*pow(3,tmp[1]-1)*pow(5,tmp[2]-1)*pow(7,i))
-        end = max(arr)
-        if end >= targetRoom:
-            print(f"Room : {targetRoom} already have")
-            continue
-        if targetRoom in delRoom:
-            delRoom.remove(targetRoom)
-        if not targetRoom in addRoom:
-            print(f"Insert room : {targetRoom}")
-            addRoom.append(targetRoom)
+        hotel , countManual , status = insertPeople(hotel,targetRoom,countManual)
+        if status:
+            print("insert success")
         else:
-            print(f"Room : {targetRoom} already insert")
+            print(f"Room : {targetRoom} already have people")
         end_time = time.perf_counter()
         elapsed_time = end_time - start_time
-        print(f"Execution time (insert): {elapsed_time:.10f} seconds")
+        print(f"Execution time (Prepare phase): {elapsed_time:.10f} seconds")
+            
+
 
     elif cmd == "m":
 
@@ -231,35 +171,11 @@ Enter command : """)
         print(f"Current memory usage: {current / 1024 / 1024:.2f} MB")
 
     elif cmd == "e":
-        print("Export File . . .")
         start_time = time.perf_counter()
-        arr = []
-        for room in addRoom:
-            arr.append(room)
-        for i in range(hotel.size()):
-            tmp = hotel.dequeue()
-            hotel.enqueue(tmp)
-            arr.append(pow(2,tmp[0]-1)*pow(3,tmp[1]-1)*pow(5,tmp[2]-1)*pow(7,i))
-        end = max(arr)
-        if os.path.exists("./Hotel's room.txt"):
-            os.remove("./Hotel's room.txt")
-        with open("Hotel's room.txt", "a", encoding="utf-8") as f:
-            f.write(f"Last room number : {end}\n")
-            for i in range(1,end+1):
-                status = search(i)
-                if status:
-                    if status[-1] != 'y':
-                        f.write(f"{status}\n")
-        filePath = "./Hotel's room.txt"
-        fileSize = os.path.getsize(filePath)
-        file_size_mb = fileSize / 1024 /1024
-        print()
-        print("Done!!")
-        print(f"File size in MB: {file_size_mb:.2f} MB")
-        print()
+        exportFile(hotel,countAdd)
         end_time = time.perf_counter()
         elapsed_time = end_time - start_time
-        print(f"Execution time (export file): {elapsed_time:.10f} seconds")
+        print(f"Execution time (Prepare phase): {elapsed_time:.10f} seconds")
 
             
 
